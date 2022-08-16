@@ -1,4 +1,5 @@
 import sqlite3 as sq
+
 #
 # Название	Описание
 # NULL	Значение - значение NULL.
@@ -32,45 +33,52 @@ import sqlite3 as sq
 # SELECT * FROM users WHERE score > 2 ORDER BY score DESC LIMIT 2, 5 # - SAME EXAMPLE !!!!!!!!!!!!!!
 
 
+# UPDATE - update row in the tables
 
-# con = sq.connect('saper.db')
+# DELETE - delete row from the table
+
+# Template for searching - % - any continuation of the string
+# Template for searching - _ - any next symbol
+
+# AGRIGATING FUNCTIONS:
+# avg(X) - avg()возвращает среднее значение указанного поля
+# count(*) - count(X)возвращает количество раз,которое X не NULL в группе
+# count(X) - возвращает общее количество строк в группе -> подсчет числа записей
+# group_concat(X)
+# group_concat(X,Y) - возвращает строку,которая является конкатенцией всех не нулевых значений параметраX
+# max(X) - нахождение максимального значения указанного поля
+# min(X) - нахождение минимального значения указанного поля
+# sum(X) - почсчет сумы указанного поля
+# total(X) - возвращают сумму всех не-NULL значений в группе
+
 with sq.connect('saper.db') as con:
-    cur = con.cursor()  # cusor
+    cur = con.cursor()
 
-    # cur.execute('DROP TABLE IF EXISTS users')  # delete table from DB IF EXISTS
-
-    cur.execute('''CREATE TABLE IF NOT EXISTS users (
-    user_id INTEGER PRIMARY KEY AUTOINCREMENT,  
-    name TEXT NOT NULL,
-    sex INTEGER NOT NULL DEFAULT 1,
-    old INTEGER,
-    score INTEGER
-    )''') # CREATE - creating table, PRIMARY KEY - main key - unicum for current table, NOT NULL - not null,
-    # DEFAULT 1 - default value, AUTOINCREMENT - automatic increase value to 1 (but its also going automatically without this option)
-
-    cur.execute('''INSERT INTO users (name, sex, old, score) VALUES 
-    ('Serg', 1, 43, 1),
-    ('Ser', 1, 43, 2),
-    ('Sergey', 1, 43, 3),
-    ('Sergio', 1, 43, 4),
-    ('Sergiy', 1, 43, 5),
-    ('Angel', 2, 38, 6),
-    ('Angelina', 2, 38, 7),
-    ('Ang', 2, 38, 8),
-    ('Angelok', 2, 38, 9),
-    ('Angelinka', 2, 38, 10),
-    ('Mark', 1, 8, 3),
-    ('Mar', 1, 8, 9),
-    ('Mar4ik', 1, 8, 10),
-    ('Marchik', 1, 8, 11),
-    ('Mark', 1, 8, 8),
-    ('Yarik', 1, 2, 23),
-    ('Yar', 1, 2, 3),
-    ('Yarosliv', 1, 2, 10),
-    ('Yaroslavchik', 1, 2, 8)    
-    ''')
+#  SELECT user_id, * FROM games, users ON users.name = games.nam
+#  SELECT user_id, * FROM games, users
 
 
+    cur.execute('''
+    SELECT name, sex,games.score 
+    FROM games 
+    JOIN users 
+    ON games.nam = users.name
+    ''') # join two tables fron one db
+    # SELECT - select columns
+    # FROM - from which table name
+    # JOIN - using second table name
+    # ON - which columns use for both tables (same value in both tables)
+    s = cur.fetchall()
+    for i in s:
+        print(*i)
 
-#
-# con.close()
+
+    print('_'*50)
+
+    cur.execute('''
+    SELECT name, sex,games.score 
+    FROM games, users
+    ''') # join without JOIN
+    s = cur.fetchall()
+    for i in s:
+        print(*i)

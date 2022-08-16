@@ -1,4 +1,5 @@
 import sqlite3 as sq
+
 #
 # Название	Описание
 # NULL	Значение - значение NULL.
@@ -6,6 +7,8 @@ import sqlite3 as sq
 # REAL	Значение представляет собой значение с плавающей запятой, которое хранится как 8-байтовое число с плавающей точкой IEEE.
 # TEXT	Значение представляет собой текстовую строку, хранящуюся с использованием кодировки базы данных (UTF-8, UTF-16BE или UTF-16LE)
 # BLOB	Значение представляет собой блок данных, который хранится точно так же, как он был введен.
+
+
 
 
 # INSERT INTO users (5, 'Ser', 1, 43, 1) # - insert new record
@@ -32,45 +35,58 @@ import sqlite3 as sq
 # SELECT * FROM users WHERE score > 2 ORDER BY score DESC LIMIT 2, 5 # - SAME EXAMPLE !!!!!!!!!!!!!!
 
 
+# UPDATE - update row in the tables
 
-# con = sq.connect('saper.db')
+# DELETE - delete row from the table
+
+# Template for searching - % - any continuation of the string
+# Template for searching - _ - any next symbol
+
 with sq.connect('saper.db') as con:
     cur = con.cursor()  # cusor
 
-    # cur.execute('DROP TABLE IF EXISTS users')  # delete table from DB IF EXISTS
+    #  set score for all users = 0
+    # cur.execute('''
+    # UPDATE users SET score = 0
+    # ''')
 
-    cur.execute('''CREATE TABLE IF NOT EXISTS users (
-    user_id INTEGER PRIMARY KEY AUTOINCREMENT,  
-    name TEXT NOT NULL,
-    sex INTEGER NOT NULL DEFAULT 1,
-    old INTEGER,
-    score INTEGER
-    )''') # CREATE - creating table, PRIMARY KEY - main key - unicum for current table, NOT NULL - not null,
-    # DEFAULT 1 - default value, AUTOINCREMENT - automatic increase value to 1 (but its also going automatically without this option)
+    cur.execute('''
+    UPDATE users SET score = 999 WHERE rowid = 1 OR sex = 2    
+    ''')
+    cur.execute('''
+    UPDATE users SET score = score + 500 WHERE sex = 2   
+    ''')
 
-    cur.execute('''INSERT INTO users (name, sex, old, score) VALUES 
-    ('Serg', 1, 43, 1),
-    ('Ser', 1, 43, 2),
-    ('Sergey', 1, 43, 3),
-    ('Sergio', 1, 43, 4),
-    ('Sergiy', 1, 43, 5),
-    ('Angel', 2, 38, 6),
-    ('Angelina', 2, 38, 7),
-    ('Ang', 2, 38, 8),
-    ('Angelok', 2, 38, 9),
-    ('Angelinka', 2, 38, 10),
-    ('Mark', 1, 8, 3),
-    ('Mar', 1, 8, 9),
-    ('Mar4ik', 1, 8, 10),
-    ('Marchik', 1, 8, 11),
-    ('Mark', 1, 8, 8),
-    ('Yarik', 1, 2, 23),
-    ('Yar', 1, 2, 3),
-    ('Yarosliv', 1, 2, 10),
-    ('Yaroslavchik', 1, 2, 8)    
+    cur.execute('''
+    UPDATE users SET score = 999999000 WHERE name LIKE 'Sergei'    
+    ''')
+
+    cur.execute('''
+    UPDATE users SET score = 11111111111111111 WHERE name LIKE 'Y%'    
+    ''')
+
+    cur.execute('''
+    UPDATE users SET score = 55555555555555555 WHERE name LIKE 'Mar_'    
     ''')
 
 
+    cur.execute('''
+    UPDATE users SET score = 55555555555555555 WHERE name LIKE 'Mar_'    
+    ''')
 
+
+    cur.execute('''
+    UPDATE users SET score = 1000000000000 WHERE name LIKE 'Ang_l%'    
+    ''')
+
+    cur.execute("UPDATE users SET score = 1, old = 43 WHERE old > 40")
+
+
+############################################################################################
+
+    cur.execute("DELETE FROM users WHERE rowid in (1, 40)")  # rowid will only increase and will not be deleted second time
+
+    s = tuple(range(1, 40))
+    cur.execute(f"DELETE FROM users WHERE rowid in {s}")
 #
 # con.close()
