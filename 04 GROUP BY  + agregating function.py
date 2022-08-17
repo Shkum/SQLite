@@ -104,3 +104,8 @@ with sq.connect('saper.db') as con:
     print('Total sum of score for each person:'.upper().rjust(40, '>'))
     for k, v in d.items():
         print(k.ljust(10, ' '), ' = ', str(v).rjust(20, '-'))
+
+
+ # following comads execution automatically by context manager WITH
+    # co.commit()  -  save all change to DB
+    # con.close()  -  close DB

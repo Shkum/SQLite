@@ -96,3 +96,9 @@ with sq.connect('saper.db') as con:
 # ON games.user_id = users.id
 # GROUP BY user_id
 # ORDER BY score DESC
+
+
+
+ # following comads execution automatically by context manager WITH
+    # co.commit()  -  save all change to DB
+    # con.close()  -  close DB

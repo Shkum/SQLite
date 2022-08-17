@@ -48,5 +48,6 @@ with sq.connect('saper.db') as con:
     result2 = cur.fetchmany(2) # read X values
     print(result2)
 
-#
-# con.close()
+# following comads execution automatically by context manager WITH
+# co.commit()  -  save all change to DB
+# con.close()  -  close DB

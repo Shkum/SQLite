@@ -134,3 +134,9 @@ with sq.connect('saper.db') as con:
     # DELETE all student who is yanger them Masha:
     # DELETE FROM students
     # WHERE old < (SELECT old FROM students WHERE id = 2)
+
+
+
+ # following comads execution automatically by context manager WITH
+    # co.commit()  -  save all change to DB
+    # con.close()  -  close DB

@@ -121,3 +121,8 @@ with sq.connect('saper.db') as con:
     s = cur.fetchall()
     for i in s:
         print(*i)
+
+
+ # following comads execution automatically by context manager WITH
+    # co.commit()  -  save all change to DB
+    # con.close()  -  close DB

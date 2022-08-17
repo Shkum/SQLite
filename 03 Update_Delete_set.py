@@ -88,5 +88,8 @@ with sq.connect('saper.db') as con:
 
     s = tuple(range(1, 40))
     cur.execute(f"DELETE FROM users WHERE rowid in {s}")
-#
-# con.close()
+
+
+ # following comads execution automatically by context manager WITH
+    # co.commit()  -  save all change to DB
+    # con.close()  -  close DB
