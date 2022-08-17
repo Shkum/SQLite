@@ -84,6 +84,9 @@ import sqlite3 as sq
 # in the brackets () we may use nested query
 
 
+# all changes after BEGIN will be rollbacked in case of error during operations with BD after BEGIN
+
+
 cars = [
     ('Audi', 52642),
     ('Mercedes', 57127),
@@ -92,78 +95,33 @@ cars = [
     ('Bentley', 350000),
 ]
 
+with sq.connect('saper.db') as con:
 
+    con.row_factory = sq.Row               ###  RETURN DICT BUT NOT TUPLE
 
-
-#with sq.connect('saper.db') as con:
-
-# all changse after BEGIN will be rollbacked in case of error during operations with BD after BEGIN
-con = None
-
-try:
-    con = sq.connect('saper.db')
     cur = con.cursor()
     cur.executescript(''' CREATE TABLE IF NOT EXISTS cars 
     (
     car_id INTEGER PRIMARY KEY AUTOINCREMENT,
     model TEXT,
     price INTEGER
-    );
-    BEGIN;
-    INSERT INTO cars VALUES (NULL, 'Audi', 52642);
-    INSERT INTO cars VALUES (NULL, 'Mercedes', 57127);
-    INSERT INTO cars VALUES (NULL, 'Skoda', 9000);
-    INSERT INTO cars VALUES (NULL, 'Volvo', 29000);
-    INSERT INTO cars VALUES (NULL, 'Bentley', 350000);
-    UPDATE cars SET price = price + 1000000
+    )
     ''')
 
-
-    # 1 Option:
-    # cur.execute("INSERT INTO cars VALUES (1, 'Audi', 52642)")
-    # cur.execute("INSERT INTO cars VALUES (2, 'Mercedes', 57127)")
-    # cur.execute("INSERT INTO cars VALUES (3, 'Skoda', 9000)")
-    # cur.execute("INSERT INTO cars VALUES (4, 'Volvo', 29000)")
-    # cur.execute("INSERT INTO cars VALUES (5, 'Bentley', 350000)")
-
-
-    # 2 Option:
-    # for car in cars:
-    #     cur.execute("INSERT INTO cars VALUES(NULL, ?, ?)", car)
-
-
-    # 3 Option:
     # cur.executemany("INSERT INTO cars VALUES(NULL, ?, ?)", cars)
 
-    ### cur.execute("UPDATE cars SET price = :Price WHERE model LIKE 'A%'", {'Price':0})
+    # cur.execute("SELECT * FROM cars")
 
-    # insert 'Price' to price = : Price, so it will be price = 0 for all models starting wiht letter 'A'
-    # ? - unnamed parameters
-    # price = :Price - named parameters
+    cur.execute("SELECT model, price FROM cars")
+    rows = cur.fetchall()
 
+    for row in rows:
+        print(row['model'].ljust(10, ' '), '-', row['price'])
 
-    # to exequte several comands use executescript and dot with koma to separate comands
-    # delete all models starting with A
-    # for all remaining cars increase prise for 1000
-    # add Audi to table
+    print('#'*50)
 
-    ### cur.executescript("""
-    ### DELETE FROM cars WHERE model LIKE 'A%';
-    ### UPDATE cars set price = price + 1000;
-    ### INSERT into cars VALUES(NULL, 'Audi', 55000)
-    ### """)
-
-    con.commit()
-
-except sq.Error as e:
-    if con:
-        con.rollback()
-        print("Query handling error")
-finally:
-    if con:
-        con.close()
-
-
+    for row in rows:
+        print(row[0].ljust(10, ' '), '-', row[1])
 
     # following commands execution automatically by context manager WITH
     # co.commit()  -  save all change to DB
