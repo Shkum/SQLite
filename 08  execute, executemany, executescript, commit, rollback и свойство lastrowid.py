@@ -55,40 +55,11 @@ import sqlite3 as sq
 # JOIN <table1>, <table2>, etc
 # ON <join conditions>
 
-
-
-with sq.connect('saper.db') as con:
-    cur = con.cursor()
-
 #  SELECT user_id, * FROM games, users ON users.name = games.nam
 #  SELECT user_id, * FROM games, users
 
 
-    cur.execute('''
-    SELECT name, sex,games.score 
-    FROM games 
-    JOIN users 
-    ON games.nam = users.name
-    ''') # join two tables fron one db
-    # SELECT - select columns
-    # FROM - from which table name
-    # JOIN - using second table name
-    # ON - which columns use for both tables (same value in both tables)
-    s = cur.fetchall()
-    for i in s:
-        print(*i)
-
-
-    print('_'*50)
-
-    cur.execute('''
-    SELECT name, sex,games.score 
-    FROM games, users
-    ''') # join without JOIN
-    s = cur.fetchall()
-    for i in s:
-        print(*i)
-
+# __________________________
 
 # SELECT name, sex, sum(games.score) as score
 # FROM games
@@ -96,3 +67,34 @@ with sq.connect('saper.db') as con:
 # ON games.user_id = users.id
 # GROUP BY user_id
 # ORDER BY score DESC
+# ____________________________
+
+# UNION SELECT - join only unicum data
+
+
+# LIKE - condition ( same as if XXX = YYY) (Функция like ()
+# используется для реализации выражения «Y LIKE X [ESCAPE Z]»)
+
+# Следующий оператор SQLite вернет те строки из таблицы author, в которых имя автора начинается с символа «W».
+# # SELECT aut_name, country
+# FROM author
+# WHERE LIKE('W%',aut_name)=1;
+
+
+# in the brackets () we may use nested query
+
+
+with sq.connect('saper.db') as con:
+    cur = con.cursor()
+    cur.execute(''' CREATE TABLE IF NOT EXIST cars 
+    (
+    car_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    model TEXT
+    price INTEGER
+    )
+    ''')
+
+    # following comads execution automatically by context manager WITH
+    # co.commit()  -  save all change to DB
+    # con.close()  -  close DB
+

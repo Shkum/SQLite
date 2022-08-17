@@ -55,40 +55,11 @@ import sqlite3 as sq
 # JOIN <table1>, <table2>, etc
 # ON <join conditions>
 
-
-
-with sq.connect('saper.db') as con:
-    cur = con.cursor()
-
 #  SELECT user_id, * FROM games, users ON users.name = games.nam
 #  SELECT user_id, * FROM games, users
 
 
-    cur.execute('''
-    SELECT name, sex,games.score 
-    FROM games 
-    JOIN users 
-    ON games.nam = users.name
-    ''') # join two tables fron one db
-    # SELECT - select columns
-    # FROM - from which table name
-    # JOIN - using second table name
-    # ON - which columns use for both tables (same value in both tables)
-    s = cur.fetchall()
-    for i in s:
-        print(*i)
-
-
-    print('_'*50)
-
-    cur.execute('''
-    SELECT name, sex,games.score 
-    FROM games, users
-    ''') # join without JOIN
-    s = cur.fetchall()
-    for i in s:
-        print(*i)
-
+# __________________________
 
 # SELECT name, sex, sum(games.score) as score
 # FROM games
@@ -96,3 +67,70 @@ with sq.connect('saper.db') as con:
 # ON games.user_id = users.id
 # GROUP BY user_id
 # ORDER BY score DESC
+# ____________________________
+
+# UNION SELECT - join only unicum data
+
+
+# LIKE - condition ( same as if XXX = YYY) (Функция like ()
+# используется для реализации выражения «Y LIKE X [ESCAPE Z]»)
+
+# Следующий оператор SQLite вернет те строки из таблицы author, в которых имя автора начинается с символа «W».
+# # SELECT aut_name, country
+# FROM author
+# WHERE LIKE('W%',aut_name)=1;
+
+
+# in the brackets () we may use nested query
+with sq.connect('saper.db') as con:
+    cur = con.cursor()
+    cur.execute('''
+    SELECT name, subject, mark FROM marks
+    JOIN students ON students.rowid = marks.id
+    WHERE mark > (SELECT mark FROM marks WHERE id = 2 AND subject LIKE  'Si') AND subject LIKE "Si"
+    ''')
+    s = cur.fetchall()
+    for i in s:
+        print(*i)
+
+
+print('/\\'*50)
+
+# fillup table FEMALE from table STIDENTS with female only
+with sq.connect('saper.db') as con:
+    cur = con.cursor()
+    cur.execute('''
+    INSERT INTO female SELECT NULL, name, sex, old FROM students WHERE sex = 2
+    ''')
+
+    cur = con.cursor()
+    cur.execute('''
+    SELECT * FROM female
+    ''')
+    s = cur.fetchall()
+    for i in s:
+        print(*i)
+
+
+print('/\\'*50)
+
+# set to 0 all marks which less them minimum mark of id=1
+# expression in the brackets () will be executed first !!!
+with sq.connect('saper.db') as con:
+    cur = con.cursor()
+    cur.execute('''
+    UPDATE marks SET mark = 0
+    WHERE mark <= (SELECT min(mark) FROM marks WHERE id = 1)
+    ''')
+
+    cur = con.cursor()
+    cur.execute('''
+    SELECT * FROM marks
+    ''')
+    s = cur.fetchall()
+    for i in s:
+        print(*i)
+
+    # DELETE all student who is yanger them Masha:
+    # DELETE FROM students
+    # WHERE old < (SELECT old FROM students WHERE id = 2)

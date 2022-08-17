@@ -55,40 +55,11 @@ import sqlite3 as sq
 # JOIN <table1>, <table2>, etc
 # ON <join conditions>
 
-
-
-with sq.connect('saper.db') as con:
-    cur = con.cursor()
-
 #  SELECT user_id, * FROM games, users ON users.name = games.nam
 #  SELECT user_id, * FROM games, users
 
 
-    cur.execute('''
-    SELECT name, sex,games.score 
-    FROM games 
-    JOIN users 
-    ON games.nam = users.name
-    ''') # join two tables fron one db
-    # SELECT - select columns
-    # FROM - from which table name
-    # JOIN - using second table name
-    # ON - which columns use for both tables (same value in both tables)
-    s = cur.fetchall()
-    for i in s:
-        print(*i)
-
-
-    print('_'*50)
-
-    cur.execute('''
-    SELECT name, sex,games.score 
-    FROM games, users
-    ''') # join without JOIN
-    s = cur.fetchall()
-    for i in s:
-        print(*i)
-
+# __________________________
 
 # SELECT name, sex, sum(games.score) as score
 # FROM games
@@ -96,3 +67,57 @@ with sq.connect('saper.db') as con:
 # ON games.user_id = users.id
 # GROUP BY user_id
 # ORDER BY score DESC
+# ____________________________
+
+# UNION SELECT - join only unicum data
+
+with sq.connect('saper.db') as con:
+    cur = con.cursor()
+    cur.execute('''
+    SELECT score,`from` FROM tab1
+    UNION SELECT val, type FROM tab2
+    ''')
+    s = cur.fetchall()
+    for i in s:
+        print(*i)
+
+print('#'*50)
+
+# unicum data only 100, 200, 300, 400
+with sq.connect('saper.db') as con:
+    cur = con.cursor()
+    cur.execute('''
+    SELECT score FROM tab1
+    UNION SELECT val FROM tab2
+    ''')
+    s = cur.fetchall()
+    for i in s:
+        print(*i)
+
+
+
+print('#'*50)
+
+with sq.connect('saper.db') as con:
+    cur = con.cursor()
+    cur.execute('''
+    SELECT score, 'from_table_1' as tbl FROM tab1
+    UNION SELECT val, 'from_table_2' as tbl FROM tab2
+    ''')
+    s = cur.fetchall()
+    for i in s:
+        print(*i)
+
+
+print('#'*50)
+
+with sq.connect('saper.db') as con:
+    cur = con.cursor()
+    cur.execute('''
+    SELECT score, 'from_table_1' as tbl FROM tab1
+    UNION SELECT val, 'from_table_2' as tbl FROM tab2
+    ORDER BY score DESC
+    ''')
+    s = cur.fetchall()
+    for i in s:
+        print(*i)
